@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SafeVault Portal Selector</title>
+</head>
+<body>
+    <h1>Welcome to SafeVault</h1>
+    <p>Select your portal:</p>
+
+    <button onclick="goToAdmin()">Admin Portal</button>
+    <button onclick="goToUser()">User Portal</button>
+
+    <script>
+        const token = localStorage.getItem("SafeVaultJWT");
+
+        async function goToAdmin() {
+            if (!token) return window.location.href = "/unauthorized.html";
+
+            const res = await fetch("/admin/dashboard", {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const html = await res.text();
+                document.open();
+                document.write(html);
+                document.close();
+            } else {
+                window.location.href = "/unauthorized.html";
+            }
+        }
+
+        async function goToUser() {
+            if (!token) return window.location.href = "/unauthorized.html";
+
+            const res = await fetch("/user/dashboard", {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const html = await res.text();
+                document.open();
+                document.write(html);
+                document.close();
+            } else {
+                window.location.href = "/unauthorized.html";
+            }
+        }
+    </script>
+</body>
+</html>
