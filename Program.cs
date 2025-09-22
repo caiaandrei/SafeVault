@@ -1,9 +1,13 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using SafeVault.Repository;
+using SafeVault.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<IUserRepository, MySqlUserRepository>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
 {

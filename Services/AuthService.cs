@@ -10,7 +10,7 @@ using SafeVault.Repository;
 
 namespace SafeVault.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _repo;
         private readonly string _securityKey;

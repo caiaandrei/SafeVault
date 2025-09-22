@@ -10,13 +10,12 @@ namespace SafeVault.UsersController
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IConfiguration config, ILogger<UsersController> logger)
+        public UsersController(IConfiguration config, ILogger<UsersController> logger, IAuthService authService)
         {
-            var userRepo = new MySqlUserRepository(config);
-            _authService = new AuthService(userRepo, config);
+            _authService = authService;
             _logger = logger;
         }
 
