@@ -1,0 +1,56 @@
+@host = http://localhost:5181
+
+### Register a new user
+POST {{host}}/api/users/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "P@ssw0rd!",
+  "role": "user"
+}
+
+
+### Login as that user
+POST {{host}}/api/users/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "P@ssw0rd!"
+}
+
+
+### Use the returned JWT here
+GET {{host}}/api/users/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdGFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NTg1NjkxNTksImlzcyI6IlNhZmVWYXVsdCIsImF1ZCI6IlNhZmVWYXVsdFVzZXJzIn0.KQioCsG43PHcnV5wB4BIBBS2COorgIdlvZmMWsmNGLg
+Accept: application/json
+
+
+### Register a new admin
+POST {{host}}/api/users/register
+Content-Type: application/json
+
+{
+  "username": "testadmin",
+  "email": "testadmin@example.com",
+  "password": "P@ssw0rd!",
+  "role": "admin"
+}
+
+
+### Login as admin
+POST {{host}}/api/users/login
+Content-Type: application/json
+
+{
+  "username": "testadmin",
+  "password": "P@ssw0rd!"
+}
+
+
+### Access admin info
+GET {{host}}/api/users/admin/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdGFkbWluIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NTg1NjkxNTksImlzcyI6IlNhZmVWYXVsdCIsImF1ZCI6IlNhZmVWYXVsdFVzZXJzIn0.KQioCsG43PHcnV5wB4BIBBS2COorgIdlvZmMWsmNGLg
+Accept: application/json
