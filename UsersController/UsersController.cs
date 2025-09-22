@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SafeVault.Models;
@@ -22,6 +23,13 @@ namespace SafeVault.UsersController
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterUser user)
         {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Registration attempt with invalid model state for user: {Username}",
+                    WebUtility.HtmlEncode(user?.Username ?? "unknown"));
+                return BadRequest(ModelState);
+            }
+
             var ctx = GetRequestContext();
             _logger.LogInformation(
                 "Registration attempt at {Timestamp} from IP: {IP}, UA: {UA}, Username: {Username}, Role: {Role}",
@@ -47,6 +55,13 @@ namespace SafeVault.UsersController
         [HttpPost("login")]
         public IActionResult Login([FromBody] User user)
         {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Login attempt with invalid model state for user: {Username}",
+                    WebUtility.HtmlEncode(user?.Username ?? "unknown"));
+                return BadRequest(ModelState);
+            }
+
             var ctx = GetRequestContext();
             _logger.LogInformation(
                 "Login attempt at {Timestamp} from IP: {IP}, UA: {UA}, Username: {Username}",

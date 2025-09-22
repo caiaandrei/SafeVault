@@ -33,7 +33,7 @@ POST {{host}}/api/users/register
 Content-Type: application/json
 
 {
-  "username": "testadmin2",
+  "username": "testadmin3<script>",
   "email": "testadmin2@example.com",
   "password": "P@ssw0rd!",
   "role": "admin"
@@ -45,12 +45,11 @@ POST {{host}}/api/users/login
 Content-Type: application/json
 
 {
-  "username": "testadmin2",
+  "username": "testadmin3",
   "password": "P@ssw0rd!"
 }
 
 
 ### Access admin info
 GET {{host}}/api/users/admin/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdGFkbWluMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluIiwiZXhwIjoxNzU4NTY5NzA1LCJpc3MiOiJTYWZlVmF1bHQiLCJhdWQiOiJTYWZlVmF1bHRVc2VycyJ9.I8uEUrV184jdjXD-HHcZK5q-wvSTV31VTLtoMYcUr40
-Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdGFkbWluMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluIiwiZXhwIjoxNzU4NTcwNjU3LCJpc3MiOiJTYWZlVmF1bHQiLCJhdWQiOiJTYWZlVmF1bHRVc2VycyJ9.gVs-VXDDj7qboVmkiVFgRuvuAm06fmBCFJMTQ5fMWTc

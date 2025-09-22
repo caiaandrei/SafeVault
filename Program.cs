@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using SafeVault;
 using SafeVault.Repository;
 using SafeVault.Services;
 
@@ -28,6 +29,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
+app.UseMiddleware<ValidationMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
