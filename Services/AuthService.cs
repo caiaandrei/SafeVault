@@ -1,74 +1,79 @@
-using SafeVault.Helpers;
-using SafeVault.Repository;
-using MySql.Data.MySqlClient;
-using BCrypt.Net;
+using System;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using BCrypt.Net;
+using SafeVault.Helpers;
+using SafeVault.Repository;
 
-namespace SafeVault.Services;
+namespace SafeVault.Services
+{
+    public class AuthService
+    {
+        private readonly IUserRepository _repo;
+        private readonly string _securityKey;
 
-public class AuthService {
-    private readonly IUserRepository _repo;
-    private readonly string _securityKey;
-
-    public AuthService(IUserRepository repo, IConfiguration config) {
-        _repo = repo;
-        _securityKey = config["SecurityKey"] ?? string.Empty;
-    }
-
-    public string AuthenticateUser(string username, string password) {
-        // ✅ Validate username
-        if (!ValidationHelper.IsValidInput(username, InputType.Username))
-            return string.Empty;
-
-        // ✅ Validate password (basic non-empty check)
-        if (string.IsNullOrWhiteSpace(password))
-            return string.Empty;
-
-        var creds = _repo.GetUserCredentials(username);
-        if (creds == null || !BCrypt.Net.BCrypt.Verify(password, creds.Value.PasswordHash)) {
-            return string.Empty;
+        public AuthService(IUserRepository repo, IConfiguration config)
+        {
+            _repo = repo;
+            _securityKey = config["SecurityKey"]
+                ?? throw new ArgumentNullException(nameof(config), "Missing SecurityKey configuration");
         }
 
-        return GenerateJwtToken(username, creds.Value.Role);
-    }
+        public string AuthenticateUser(string username, string password)
+        {
+            // whitelist‐based validation
+            if (!ValidationHelper.IsValidInput(username, InputType.Username) ||
+                !ValidationHelper.IsValidInput(password, InputType.Password))
+            {
+                return string.Empty;
+            }
 
-    public bool RegisterUser(string username, string email, string password, string role) {
-        // ✅ Validate all inputs
-        if (!ValidationHelper.IsValidInput(username, InputType.Username) ||
-            !ValidationHelper.IsValidInput(email, InputType.Email) ||
-            string.IsNullOrWhiteSpace(password) ||
-            !IsValidRole(role))
-            return false;
+            var creds = _repo.GetUserCredentials(username);
+            if (creds == null || !BCrypt.Net.BCrypt.Verify(password, creds.Value.PasswordHash))
+            {
+                return string.Empty;
+            }
 
-        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-        return _repo.AddUser(username, email, hashedPassword, role);
-    }
+            return GenerateJwtToken(username, creds.Value.Role);
+        }
 
-    private string GenerateJwtToken(string username, string role) {
-        var claims = new[] {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, role)
-        };
+        public bool RegisterUser(string username, string email, string password, string role)
+        {
+            if (!ValidationHelper.IsValidInput(username, InputType.Username) ||
+                !ValidationHelper.IsValidInput(email, InputType.Email) ||
+                !ValidationHelper.IsValidInput(password, InputType.Password) ||
+                !ValidationHelper.IsValidInput(role, InputType.Role))
+            {
+                return false;
+            }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            return _repo.AddUser(username, email, hashedPassword, role);
+        }
 
-        var token = new JwtSecurityToken(
-            issuer: "SafeVault",
-            audience: "SafeVaultUsers",
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(1),
-            signingCredentials: creds
-        );
+        private string GenerateJwtToken(string username, string role)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role)
+            };
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-    private bool IsValidRole(string role) {
-        // ✅ Restrict to known roles only
-        return role == "admin" || role == "user";
+            var token = new JwtSecurityToken(
+                issuer: "SafeVault",
+                audience: "SafeVaultUsers",
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
